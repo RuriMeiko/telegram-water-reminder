@@ -38,9 +38,10 @@ To install the Telegram Water Reminder bot, follow these steps:
 This bot was created to help users maintain proper hydration and develop healthy water-drinking habits. If you have any questions or need further assistance, feel free to reach out to the bot creator.
 
 - Creator: Nguyễn Trần Hoàng Long
+- Tester: Bùi Bích Phương
 - Email: chandoralong@gmail.com
 
-The bot is hosted on Worker Cloudflare, which ensures reliable and efficient operation. If you encounter any issues or have suggestions for improvement, please let me know.
+The bot is hosted on Worker Cloudflare, which ensures reliable and efficient operation. If you encounter any issues or have suggestions for improvement, please let us know.
 
 Happy hydrating!
 
