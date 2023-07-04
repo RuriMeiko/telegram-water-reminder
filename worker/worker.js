@@ -384,7 +384,7 @@ async function handleRequest(request) {
             ///////////////////// Xử lý /help /////////////////////
             // text có dạng như: '/help'
             else if (text == "/help") {
-                await sendMessage('Hello ngừi đẹp, hãy nhớ cài đặt 🥐\n<b>Cân nặng</b> : /weight\n<b>Chiều cao</b> : /height\n<b>Thời gian thức</b> : /waketime\n<b>Thời gian ngủ</b> : /sleeptime\n<b>Thông tin hiện tại</b> : /info', chatIdin);
+                await sendMessage('Hello ngừi đẹp, hãy nhớ cài đặt 🥐\n<b>Cân nặng</b> : /weight\n<b>Chiều cao</b> : /height\n<b>Thời gian thức</b> : /waketime\n<b>Thời gian ngủ</b> : /sleeptime\n<b>Thông tin hiện tại</b> : /info\n\nCách dùng là hãy nhấn vào <code>đã uống nước</code> sau mỗi tin nhắn nhắc nhở người, sau khi nhấn có thể thay đổi lượng nước vừa uống bằng cách gửi số ml nước vừa uống cho bot hoặc không gửi để tự động cộng theo lượng nước mặc định đã đặt 😬', chatIdin);
             }
             /////////////////////////////////////////////////////////
 
@@ -544,7 +544,7 @@ async function handleRequest(request) {
                 const numberFormat = /^(?:[1-9]\d{0,2}|1000)$/;
                 // Kiểm tra chính quy
                 if (!numberFormat.test(text)) {
-                    await sendMessage('Lượng nước em vừa uống gửi anh sai định dạng hoặc là quá nhiều rồi\nHãy gửi anh trong khoảng 1 - 1000, ví dụ nh: <code>250</code>\nĐơn vị là <i>ml</i> 😶‍🌫️', chatIdin);
+                    await sendMessage('Lượng nước em vừa uống gửi anh sai định dạng hoặc là quá nhiều rồi\nHãy gửi anh trong khoảng 1 - 1000, ví dụ như: <code>250</code>\nĐơn vị là <i>ml</i> 😶‍🌫️', chatIdin);
                 }
                 else {
                     // @ts-ignore
