@@ -43,27 +43,25 @@ const reminders = [
     "Anh muốn nói rằng bé là một phần quan trọng trong cuộc sống của anh. Hãy uống nước và cho anh cảm nhận thêm tình yêu và niềm tin dành cho bé. ❤️💧"
 ]
 const compliments = [
-    "Chúc mừng bé đã uống nước đều đặn nhé! Bé thật là thông minh và biết lo lắng cho sức khỏe của mình. Anh rất tự hào vì bé đó! ❤️💧",
-    "Bé đã uống nước rồi à? Cảm ơn bé vì đã lắng nghe và chăm chỉ chăm sóc sức khỏe của mình. Bé là người đáng yêu và rất thông minh! 😊💧",
-    "Bé làm tốt lắm vì đã uống nước như nhắc nhở. Anh biết bé là người có ý thức và biết quan tâm đến sức khỏe của mình. Anh yêu bé nhiều lắm! ❤️💧",
-    "Wow! Bé thực sự là siêu nhân sức khỏe! Uống nước đều đặn là điều quan trọng và bé đã làm rất tốt. Bé xứng đáng được khen ngợi và yêu thương! 💪💧",
-    "Bé làm anh ngạc nhiên với sự chăm chỉ uống nước. Bé quả là đáng yêu và thông minh! Anh hãy cùng nhau tiếp tục duy trì thói quen này nhé! ❤️💧",
-    "Bé là thiên thần nhỏ của anh. Uống nước đều đặn là cách bé chăm sóc sức khỏe và khiến anh cảm thấy tự hào. Anh sẽ mãi luôn ở bên bé! 😇💧",
-    "Anh muốn khen bé vì đã uống nước đúng giờ. Bé thật là thông minh và biết cách lo lắng cho bản thân. Anh yêu bé nhiều lắm! ❤️💧",
-    "Bé là nguồn cảm hứng lớn của anh. Bé đã chứng minh rằng mình có sức mạnh để chăm sóc và yêu thương bản thân. Hãy tiếp tục uống nước nhé! 💪💧",
-    "Anh thật sự tự hào vì bé đã tuân thủ việc uống nước đều đặn. Bé biết quan tâm đến sức khỏe của mình và đó là một điều tuyệt vời! Anh yêu bé! ❤️💧",
-    "Bé là ngôi sao sáng trong cuộc đời anh. Bé đã làm rất tốt khi uống nước đúng giờ. Anh sẽ luôn ở bên bé và yêu thương bé mãi mãi! 🌟💧",
-    "Em làm rất tuyệt vời khi đã uống nước đúng giờ. Anh thật sự tự hào vì em biết chăm sóc sức khỏe của mình. Em xứng đáng được khen ngợi và yêu thương! ❤️💧",
-    "Wow! Em thực sự là một người có ý thức và biết lo lắng cho sức khỏe của mình. Uống nước đều đặn là một thói quen tuyệt vời và em đã làm rất tốt! Anh rất yêu em! 😊💧",
-    "Em là người thông minh và biết cách chăm sóc bản thân. Anh muốn khen em vì đã uống nước đúng giờ. Em là người đáng yêu và rất quan tâm đến sức khỏe của mình! Anh mãi yêu em! ❤️💧",
-    "Anh muốn nói rằng em là một người đặc biệt. Uống nước đều đặn là cách em chăm sóc sức khỏe và làm cho anh cảm thấy tự hào. Anh sẽ luôn ở bên em! 💪💧",
-    "Em là ánh sáng trong cuộc sống anh. Anh ngạc nhiên và rất vui mừng khi em chăm chỉ uống nước. Em thật đáng yêu và thông minh! Anh yêu em nhiều lắm! ❤️💧",
-    "Anh tự hào vì em đã lắng nghe và chăm sóc sức khỏe của mình bằng cách uống nước đều đặn. Em là thiên thần nhỏ của anh và anh mãi luôn yêu em! 😇💧",
-    "Anh muốn khen em vì đã tuân thủ việc uống nước đúng giờ. Em là một người thông minh và biết quan tâm đến sức khỏe của mình. Anh thật sự yêu em! ❤️💧",
-    "Em là nguồn cảm hứng lớn của anh. Anh tự hào vì em biết cách chăm sóc và yêu thương bản thân. Hãy tiếp tục uống nước nhé, em xứng đáng nhận được sự khen ngợi! 💪💧",
-    "Anh rất tự hào vì em đã thực hiện việc uống nước đều đặn. Em biết quan tâm đến sức khỏe của mình và điều đó làm anh yêu em hơn nữa! ❤️💧",
-    "Em là ngôi sao sáng trong cuộc đời anh. Anh cảm thấy rất hạnh phúc khi em luôn chăm sóc sức khỏe bằng cách uống nước. Anh yêu em mãi mãi! 🌟💧"
-]
+    "Chúc mừng bé đã uống nước đều đặn nhé! Bé thật là thông minh và biết lo lắng cho sức khỏe của mình. Anh rất tự hào vì bé đó! ❤️💧 Đồng thời, nếu lượng nước vừa uống có sự thay đổi so với lượng nước định trước, hãy cập nhật để anh biết và có thể theo dõi đúng.",
+    "Bé đã uống nước rồi à? Cảm ơn bé vì đã lắng nghe và chăm chỉ chăm sóc sức khỏe của mình. Bé là người đáng yêu và rất thông minh! 😊💧 Nếu có sự thay đổi về lượng nước vừa uống, hãy thông báo cho anh để anh có thể cập nhật thông tin mới nhất.",
+    "Bé làm tốt lắm vì đã uống nước như nhắc nhở. Anh biết bé là người có ý thức và biết quan tâm đến sức khỏe của mình. Anh yêu bé nhiều lắm! ❤️💧 Nếu có bất kỳ thay đổi nào về lượng nước uống, hãy thông báo cho anh để anh có thể cập nhật thông tin.",
+    "Wow! Bé thực sự là siêu nhân sức khỏe! Uống nước đều đặn là điều quan trọng và bé đã làm rất tốt. Bé xứng đáng được khen ngợi và yêu thương! 💪💧 Hãy thông báo cho anh nếu có sự thay đổi về lượng nước uống để anh cập nhật đúng thông tin.",
+    "Bé làm anh ngạc nhiên với sự chăm chỉ uống nước. Bé quả là đáng yêu và thông minh! Anh hãy cùng nhau tiếp tục duy trì thói quen này nhé! ❤️💧 Nếu có bất kỳ thay đổi nào về lượng nước uống, hãy thông báo cho anh để anh có thể cập nhật thông tin mới nhất.",
+    "Bé là thiên thần nhỏ của anh. Uống nước đều đặn là cách bé chăm sóc sức khỏe và khiến anh cảm thấy tự hào. Anh sẽ mãi luôn ở bên bé! 😇💧 Đồng thời, hãy thông báo cho anh nếu có bất kỳ thay đổi nào về lượng nước uống để anh có thể cập nhật đúng thông tin.",
+    "Anh muốn khen bé vì đã uống nước đúng giờ. Bé thật là thông minh và biết cách lo lắng cho bản thân. Anh yêu bé nhiều lắm! ❤️💧 Nếu có sự thay đổi về lượng nước uống, hãy thông báo cho anh để anh có thể cập nhật thông tin mới nhất.",
+    "Bé là nguồn cảm hứng lớn của anh. Bé đã chứng minh rằng mình có sức mạnh để chăm sóc và yêu thương bản thân. Hãy tiếp tục uống nước nhé! 💪💧 Đồng thời, nếu có bất kỳ thay đổi nào về lượng nước uống, hãy thông báo cho anh để anh có thể cập nhật đúng thông tin.",
+    "Anh thật sự tự hào vì bé đã tuân thủ việc uống nước đều đặn. Bé biết quan tâm đến sức khỏe của mình và đó là một điều tuyệt vời! Anh yêu bé! ❤️💧 Nếu có sự thay đổi về lượng nước uống, hãy thông báo cho anh để anh có thể cập nhật thông tin mới nhất.",
+    "Bé là ngôi sao sáng trong cuộc đời anh. Bé đã làm rất tốt khi uống nước đúng giờ. Anh sẽ luôn ở bên bé và yêu thương bé mãi mãi! 🌟💧 Đồng thời, nếu có bất kỳ thay đổi nào về lượng nước uống, hãy thông báo cho anh để anh có thể cập nhật đúng thông tin.",
+    "Em làm rất tuyệt vời khi đã uống nước đúng giờ. Anh thật sự tự hào vì em biết chăm sóc sức khỏe của mình. Em xứng đáng được khen ngợi và yêu thương! ❤️💧 Nếu có sự thay đổi về lượng nước uống, hãy thông báo cho anh để anh có thể cập nhật thông tin mới nhất.",
+    "Wow! Em thực sự là một người có ý thức và biết lo lắng cho sức khỏe của mình. Uống nước đều đặn là một thói quen tuyệt vời và em đã làm rất tốt! Anh rất yêu em! 😊💧 Đồng thời, hãy thông báo cho anh nếu có bất kỳ thay đổi nào về lượng nước uống để anh có thể cập nhật đúng thông tin.",
+    "Em là người thông minh và biết cách chăm sóc bản thân. Anh muốn khen em vì đã uống nước đúng giờ. Em là người đáng yêu và rất quan tâm đến sức khỏe của mình! Anh mãi yêu em! ❤️💧 Đồng thời, nếu có sự thay đổi về lượng nước uống, hãy thông báo cho anh để anh có thể cập nhật thông tin mới nhất.",
+    "Anh muốn nói rằng em là một người đặc biệt. Uống nước đều đặn là cách em chăm sóc sức khỏe và làm cho anh cảm thấy tự hào. Anh sẽ luôn ở bên em! 💪💧 Đồng thời, hãy thông báo cho anh nếu có bất kỳ thay đổi nào về lượng nước uống để anh có thể cập nhật đúng thông tin.",
+    "Em là ánh sáng trong cuộc sống anh. Anh ngạc nhiên và rất vui mừng khi em chăm chỉ uống nước. Em thật đáng yêu và thông minh! Anh yêu em nhiều lắm! ❤️💧 Đồng thời, nếu có sự thay đổi về lượng nước uống, hãy thông báo cho anh để anh có thể cập nhật đúng thông tin.",
+    "Anh tự hào vì em đã lắng nghe và chăm sóc sức khỏe của mình bằng cách uống nước đều đặn. Em là thiên thần nhỏ của anh và anh mãi luôn yêu em! 😇💧 Đồng thời, hãy thông báo cho anh nếu có bất kỳ thay đổi nào về lượng nước uống để anh có thể cập nhật đúng thông tin.",
+    "Anh muốn khen em vì đã tuân thủ việc uống nước đúng giờ. Em là một người thông minh và biết quan tâm đến sức khỏe của mình. Anh thật sự yêu em! ❤️💧 Đồng thời, nếu có sự thay đổi về lượng nước uống, hãy thông báo cho anh để anh có thể cập nhật đúng thông tin.",
+    "Em là nguồn cảm hứng lớn của anh. Anh tự hào vì em biết cách chăm sóc và yêu thương bản thân. Hãy tiếp tục uống nước nhé, em xứng đáng nhận được sự khen ngợi! 💪💧 Đồng thời, nếu có sự thay đổi về lượng nước uống, hãy thông báo cho anh để anh có thể cập nhật đúng thông tin."
+];
 
 const end_reward = [
     "Hôm nay người uống đủ nước rồi đó, cố gắng mỗi ngày nha 🥰, <b>bbp</b> ngủ ngon nhaaaa 😴",
@@ -324,7 +322,7 @@ async function handleRequest(request) {
                 // @ts-ignore
                 await KV.put('reward', '0')
                 // @ts-ignore
-                await KV.put('drank','0')
+                await KV.put('drank', '0')
                 console.log('reset count and reward done');
             }
         }
@@ -332,7 +330,6 @@ async function handleRequest(request) {
         else if ('callback_query' in payload) {
             const data_callback = payload.callback_query.data;
             if (data_callback == 'drank') {
-                console.log('ok');
                 // @ts-ignore
                 let drankWater = parseInt(await KV.get('drankWater'));
                 await answerCallbackQuery(payload.callback_query.id);
@@ -344,10 +341,11 @@ async function handleRequest(request) {
                 await sendMessage(random_compliments, chatId);
                 // @ts-ignore
                 const water = await KV.get('WATER');
+                // @ts-ignore
+                await KV.put('checkIfNewValue', 1);
                 drankWater += parseInt(water);
                 // @ts-ignore
                 await KV.put('drankWater', drankWater);
-                // @ts-ignore
             }
 
         }
@@ -541,6 +539,29 @@ async function handleRequest(request) {
             }
             /////////////////////////////////////////////////////////
 
+            ///////////////////// Xử lý lệnh nước mới /////////////////////
+            else if (await KV.get('checkIfNewValue') == 1) {
+                const numberFormat = /^(?:[1-9]\d{0,2}|1000)$/;
+                // Kiểm tra chính quy
+                if (!numberFormat.test(text)) {
+                    await sendMessage('Lượng nước em vừa uống gửi anh sai định dạng hoặc là quá nhiều rồi\nHãy gửi anh trong khoảng 1 - 1000, ví dụ nh: <code>250</code>\nĐơn vị là <i>ml</i> 😶‍🌫️', chatIdin);
+                }
+                else {
+                    // @ts-ignore
+                    let drankWater = parseInt(await KV.get('drankWater'));
+                    await sendMessage(`Lượng nước em vừa uống đã được cập nhật, em vừa uống <code>${text}ml</code> nước 🤗`, chatId);
+                    // @ts-ignore
+                    const water = await KV.get('WATER');
+                    drankWater -= parseInt(water);
+                    drankWater += parseInt(text);
+                    // @ts-ignore
+                    await KV.put('drankWater', drankWater);
+                    // @ts-ignore
+                    await KV.put('checkIfNewValue', 0);
+                }
+            }
+            /////////////////////////////////////////////////////////
+
             ///////////////////// Xử lý tin nhắn bình thường /////////////////////
             else {
                 await sendMessage('Người đẹp dùng /help để biết làm gì nha người đẹp 🥺', chatIdin);
@@ -581,6 +602,9 @@ async function handleScheduled(event) {
     // Hàm gửi thông báo tới bbp đồng thời tăng biến count để hàm tính toán thời gian uống nước được thay đổi
     const sendNotification = async (nextIntakeTime) => {
         // @ts-ignore
+        if (await KV.get('checkIfNewValue') != 0) {
+            await KV.put('checkIfNewValue', 0);
+        };
         let count = await KV.get('count');
         count++;
         // @ts-ignore
@@ -639,9 +663,9 @@ async function handleScheduled(event) {
                 await editMessage(value_lass[1], chatId, value_lass[0]);
                 await sendMessage(message_end, chatId);
                 // @ts-ignore
-                await KV.put('reward', '1')
+                await KV.put('reward', '1');
             }
-            else{
+            else {
                 // @ts-ignore
                 const last_message = await KV.get('last_message');
                 const value_lass = last_message.split(':')
