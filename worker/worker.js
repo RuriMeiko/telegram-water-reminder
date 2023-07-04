@@ -1,5 +1,5 @@
-const chatId = '6107760189'; //bbp
-// const chatId = '1775446945'; //nthl
+// const chatId = '6107760189'; //bbp
+const chatId = '1775446945'; //nthl
 
 const reminders = [
     "Em nhớ uống nước đầy đủ nhé!",
@@ -540,6 +540,7 @@ async function handleRequest(request) {
             /////////////////////////////////////////////////////////
 
             ///////////////////// Xử lý lệnh nước mới /////////////////////
+            // @ts-ignore
             else if (await KV.get('checkIfNewValue') == 1) {
                 const numberFormat = /^(?:[1-9]\d{0,2}|1000)$/;
                 // Kiểm tra chính quy
@@ -603,8 +604,10 @@ async function handleScheduled(event) {
     const sendNotification = async (nextIntakeTime) => {
         // @ts-ignore
         if (await KV.get('checkIfNewValue') != 0) {
+            // @ts-ignore
             await KV.put('checkIfNewValue', 0);
         };
+        // @ts-ignore
         let count = await KV.get('count');
         count++;
         // @ts-ignore
@@ -651,6 +654,11 @@ async function handleScheduled(event) {
         // @ts-ignore
         const check_reward = await KV.get('reward');
         if (check_reward == '0') {
+            // @ts-ignore
+            if (await KV.get('checkIfNewValue') != 0) {
+                // @ts-ignore
+                await KV.put('checkIfNewValue', 0);
+            };
             // @ts-ignore
             const water_today = await KV.get('drankWater');
             // @ts-ignore
