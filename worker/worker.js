@@ -1,5 +1,5 @@
-// const chatId = '6107760189'; //bbp
-const chatId = '1775446945'; //nthl
+const chatId = '6107760189'; //bbp
+// const chatId = '1775446945'; //nthl
 
 const reminders = [
     "Em nhớ uống nước đầy đủ nhé!",
@@ -312,7 +312,8 @@ async function handleRequest(request) {
 
 
         // dòng if này nthl thêm vào để test, cệ nó i
-        if ('status' in payload && payload.status) {
+        if ('status' in payload) {
+            console.log('debug')
             if (payload.status == '1') {
                 await updateGlobalValues();
             } else {
@@ -329,7 +330,8 @@ async function handleRequest(request) {
         // Kiểm tra nếu callback_query có trong payload 
         else if ('callback_query' in payload) {
             const data_callback = payload.callback_query.data;
-            if (data_callback == 'drank') {
+            // @ts-ignore
+            if ((data_callback == 'drank') && (await KV.get('checkIfNewValue') == 0)) {
                 // @ts-ignore
                 let drankWater = parseInt(await KV.get('drankWater'));
                 await answerCallbackQuery(payload.callback_query.id);
