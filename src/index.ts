@@ -29,15 +29,8 @@ const worker: ExportedHandler<Bindings> = {
 			commands: {
 				"/start": botCommands.start,
 				"/help": botCommands.help,
-				"/randomfood": botCommands.randomfood,
-				"/debt": botCommands.debt,
-				"/debthistory": botCommands.debthistory,
-				"/debtcreate": botCommands.debtcreate,
-				"/debtpay": botCommands.debtpay,
-				"/debtdelete": botCommands.debtdelete,
-				"/debthelp": botCommands.debthelp,
+				"/setting": botCommands.setting,
 				"/about": botCommands.about,
-				"/checkdate": botCommands.checkdate,
 			},
 		};
 		const bot = new Handler(botConfig);
