@@ -1,4 +1,4 @@
-import randomfoodBot from "./self";
+import randomfood from "./self";
 import * as utils from "../utils";
 
 export default class Handler {
@@ -6,7 +6,7 @@ export default class Handler {
 	private token: any;
 	private response: Response;
 	private request: any;
-	private bot: randomfoodBot | undefined;
+	private bot: randomfood | undefined;
 	constructor(configs: any) {
 		this.configs = configs;
 		this.token = this.configs.token;
@@ -15,7 +15,7 @@ export default class Handler {
 
 	async handle(request: any) {
 		this.request = await this.processRequest(request);
-		this.bot = new randomfoodBot({
+		this.bot = new randomfood({
 			userBot: this.configs.userBot,
 			database: this.configs.database,
 			token: this.token, // Bot Token
@@ -42,6 +42,7 @@ export default class Handler {
 
 		return this.response;
 	}
+
 	error(error: any): Response {
 		throw new Error(error);
 	}

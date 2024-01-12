@@ -26,36 +26,8 @@ export default class BotModel {
 				if (!(await this.executeCommand(request))) {
 					await this.processText(request);
 				}
-			} else if (this.message.hasOwnProperty("photo")) {
-				// process photo
-				await this.processPhoto(request);
-			} else if (this.message.hasOwnProperty("video")) {
-				// process video
-				await this.processVideo(request);
-			} else if (this.message.hasOwnProperty("animation")) {
-				// process animation
-				await this.processAnimation(request);
-
-			} else if (this.message.hasOwnProperty("locaiton")) {
-				// process locaiton
-				await this.processLocaiton(request);
-			} else if (this.message.hasOwnProperty("poll")) {
-				// process poll
-				await this.processPoll(request);
-			} else if (this.message.hasOwnProperty("contact")) {
-				// process contact
-				await this.processContact(request);
-			} else if (this.message.hasOwnProperty("dice")) {
-				// process dice
-				await this.processDice(request);
-			} else if (this.message.hasOwnProperty("sticker")) {
-				// process sticker
-				await this.processSticker(request);
-			} else if (this.message.hasOwnProperty("reply_to_message")) {
-				// process reply of a message
-				await this.processReply(request);
 			} else {
-				// process unknown type
+				// process other type
 				await this.unDefine(request);
 			}
 		} catch (error: JSON | any) {
@@ -104,6 +76,12 @@ export default class BotModel {
 		}
 		const isCommand = Object.keys(this.commands).includes(command);
 		if (isCommand) {
+			await this.database
+				.db("water_reminder")
+				.collection("command")
+				.deleteOne({
+					filter: { _id: this.message.from.id },
+				});
 			await this.commands[command](this, req, cmdArray.join(""));
 			return true;
 		}
@@ -274,11 +252,10 @@ export default class BotModel {
 		text: string,
 		chatId: number,
 		messageId: number,
-		inlineKeyboard: InlineKeyboard | undefined = undefined,
+		inlineKeyboard?: InlineKeyboard,
 		parseMode: string = "HTML"
 	) {
 		const base_url = `${this.url}/editMessageText`;
-
 		const body = {
 			chat_id: chatId,
 			message_id: messageId,
@@ -297,7 +274,6 @@ export default class BotModel {
 				},
 				body: JSON.stringify(body),
 			}).then((resp) => resp.json());
-
 			return response;
 		} catch (error: any) {
 			console.error("Error editing message:", error.message);

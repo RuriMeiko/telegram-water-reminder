@@ -104,7 +104,6 @@ export default class MongoDB {
 					error = { error };
 				}
 			}
-
 			return Promise.reject(new MongodbError(error, status));
 		}
 	}

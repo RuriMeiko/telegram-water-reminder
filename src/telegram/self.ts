@@ -1,5 +1,5 @@
-import BotModel from "./core";
 import { type InlineKeyboard } from "./data";
+import BotModel from "./cron";
 
 export default class randomfoodBot extends BotModel {
 	constructor(config: any) {
@@ -7,34 +7,203 @@ export default class randomfoodBot extends BotModel {
 	}
 	// processType
 	async processText(request: any) {
-		console.log("eyyy");
-	}
-	async processPhoto(request: any) {
-		console.log("eyyy");
-	}
-	async processVideo(request: any) {
-		console.log("eyyy");
-	}
-	async processAnimation(request: any) {
-		console.log("eyyy");
-	}
-	async processLocaiton(request: any) {
-		console.log("eyyy");
-	}
-	async processPoll(request: any) {
-		console.log("eyyy");
-	}
-	async processContact(request: any) {
-		console.log("eyyy");
-	}
-	async processDice(request: any) {
-		console.log("eyyy");
-	}
-	async processSticker(request: any) {
-		console.log("eyyy");
-	}
-	async processReply(request: any) {
-		console.log("eyyy");
+		const curCommand = await this.database
+			.db("water_reminder")
+			.collection("command")
+			.findOne({
+				filter: { _id: this.message.from.id },
+			});
+		if (curCommand.document) {
+			const inline_keyboard: InlineKeyboard = [
+				[{ text: "Quay lại 👈", callback_data: "setting" }],
+			];
+
+			switch (curCommand.document.command) {
+				case "sleeptime":
+					const sleeptime = this.message.text;
+					const timeFormat = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+					// Kiểm tra chính quy
+					if (!timeFormat.test(sleeptime)) {
+						return await this.sendMessage(
+							"Đặt thời gian ngủ không thành công\nVui lòng đọc kỹ hướng dẫn và thử lại 😌",
+							this.message.chat.id
+						);
+					}
+					await this.database
+						.db("water_reminder")
+						.collection("user_info")
+						.updateOne({
+							filter: { _id: this.message.from.id },
+							update: { $set: { sleeptime: sleeptime } },
+							upsert: true,
+						});
+					await this.editMessage(
+						"Đặt thời gian ngủ thành công~ 😴",
+						this.message.chat.id,
+						curCommand.document.messageId,
+						inline_keyboard
+					);
+					break;
+				case "waketime":
+					const waketime = this.message.text;
+					// Kiểm tra chính quy
+					const timeFormat2 = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+					if (!timeFormat2.test(waketime)) {
+						return await this.sendMessage(
+							"Đặt thời gian thức không thành công\nVui lòng đọc kỹ hướng dẫn và thử lại 😌",
+							this.message.chat.id
+						);
+					}
+					await this.database
+						.db("water_reminder")
+						.collection("user_info")
+						.updateOne({
+							filter: { _id: this.message.from.id },
+							update: { $set: { waketime: waketime } },
+							upsert: true,
+						});
+					await this.editMessage(
+						"Đặt thời gian thức thành công~ 😋",
+						this.message.chat.id,
+						curCommand.document.messageId,
+						inline_keyboard
+					);
+					break;
+				case "weight":
+					const weight = this.message.text;
+					// Kiểm tra chính quy
+					const check_weight = /\b(?:[1-9]\d|1\d{2}|200|2[0-9]{2}|300)\b/;
+					if (!check_weight.test(weight)) {
+						return await this.sendMessage(
+							"Đặt cân nặng không thành công\nVui lòng đọc kỹ hướng dẫn và thử lại 😌",
+							this.message.chat.id
+						);
+					}
+					await this.database
+						.db("water_reminder")
+						.collection("user_info")
+						.updateOne({
+							filter: { _id: this.message.from.id },
+							update: { $set: { weight: { $numberInt: weight } } },
+							upsert: true,
+						});
+					await this.editMessage(
+						"Đặt cân nặng thành công~ 🙄",
+						this.message.chat.id,
+						curCommand.document.messageId,
+						inline_keyboard
+					);
+					break;
+				case "height":
+					const height = this.message.text;
+					// Kiểm tra chính quy
+					const check_height = /\b(?:[1-9]\d|1\d{2}|200|2[0-9]{2}|300)\b/;
+
+					if (!check_height.test(height)) {
+						return await this.sendMessage(
+							"Đặt chiều cao không thành công\nVui lòng đọc kỹ hướng dẫn và thử lại 😌",
+							this.message.chat.id
+						);
+					}
+					await this.database
+						.db("water_reminder")
+						.collection("user_info")
+						.updateOne({
+							filter: { _id: this.message.from.id },
+							update: { $set: { height: { $numberInt: height } } },
+							upsert: true,
+						});
+					await this.editMessage(
+						"Đặt chiều cao thành công~ 🙄",
+						this.message.chat.id,
+						curCommand.document.messageId,
+						inline_keyboard
+					);
+					break;
+				case "water_set":
+					const waterTotal = this.message.text;
+					// Kiểm tra chính quy
+					const WaterFormat = /^(?:[1-5]\d{0,3}|6000)$/;
+					if (!WaterFormat.test(waterTotal)) {
+						return await this.sendMessage(
+							"Đặt tổng lượng nước trong một ngày không thành công\nVui lòng đọc kỹ hướng dẫn và thử lại 😌",
+							this.message.chat.id
+						);
+					}
+					await this.database
+						.db("water_reminder")
+						.collection("user_info")
+						.updateOne({
+							filter: { _id: this.message.from.id },
+							update: { $set: { waterTotal: { $numberInt: waterTotal } } },
+							upsert: true,
+						});
+					await this.editMessage(
+						"Đặt tổng lượng nước trong một ngày thành công~ 🙄",
+						this.message.chat.id,
+						curCommand.document.messageId,
+						inline_keyboard
+					);
+					break;
+				case "water_amo_set":
+					const waterDrink = this.message.text;
+					// Kiểm tra chính quy
+					const waterDrinkFormat = /^(?:[1-9]\d{0,2}|1000)$/;
+					if (!waterDrinkFormat.test(waterDrink)) {
+						return await this.sendMessage(
+							"Đặt lượng nước uống không thành công\nVui lòng đọc kỹ hướng dẫn và thử lại 😌",
+							this.message.chat.id
+						);
+					}
+					await this.database
+						.db("water_reminder")
+						.collection("user_info")
+						.updateOne({
+							filter: { _id: this.message.from.id },
+							update: { $set: { waterDrink: { $numberInt: waterDrink } } },
+							upsert: true,
+						});
+
+					await this.editMessage(
+						"Đặt lượng nước uống thành công~ 🙄",
+						this.message.chat.id,
+						curCommand.document.messageId,
+						inline_keyboard
+					);
+					break;
+				case "time_set":
+					const notiTime = this.message.text;
+					const timeFormat3 = /\b(?:[1-9]\d|1\d{2}|200|2[0-9]{2}|300)\b/;
+					// Kiểm tra chính quy
+					if (!timeFormat3.test(notiTime)) {
+						return await this.sendMessage(
+							"Đặt thời gian nhắc uống nước không thành công\nVui lòng đọc kỹ hướng dẫn và thử lại 😌",
+							this.message.chat.id
+						);
+					}
+					await this.database
+						.db("water_reminder")
+						.collection("user_info")
+						.updateOne({
+							filter: { _id: this.message.from.id },
+							update: { $set: { notiTime: { $numberInt: notiTime } } },
+							upsert: true,
+						});
+					await this.editMessage(
+						"Đặt thời gian nhắc uống nước thành công~ 😴",
+						this.message.chat.id,
+						curCommand.document.messageId,
+						inline_keyboard
+					);
+					break;
+			}
+			await this.database
+				.db("water_reminder")
+				.collection("command")
+				.deleteOne({
+					filter: { _id: this.message.from.id },
+				});
+		}
 	}
 	async unDefine(request: any) {
 		console.log("eyyy");
@@ -44,12 +213,13 @@ export default class randomfoodBot extends BotModel {
 		interface UserInfo {
 			username: string;
 			fullName: string;
-			sleeptime: string | null;
-			waketime: string | null;
-			weight: string | null;
-			height: string | null;
-			waterTotal: string | null;
-			waterDrink: string | null;
+			sleeptime: string | undefined;
+			waketime: string | undefined;
+			weight: string | undefined;
+			height: string | undefined;
+			waterTotal: string | undefined;
+			waterDrink: string | undefined;
+			notiTime: string | undefined;
 		}
 		interface settingInfo {
 			autoTime: boolean;
@@ -61,12 +231,13 @@ export default class randomfoodBot extends BotModel {
 		const user_info: UserInfo = {
 			username: this.message.from.username,
 			fullName: last_name !== "" ? `${first_name} ${last_name}` : first_name,
-			sleeptime: null,
-			waketime: null,
-			weight: null,
-			height: null,
-			waterTotal: null,
-			waterDrink: null,
+			sleeptime: undefined,
+			waketime: undefined,
+			weight: undefined,
+			height: undefined,
+			waterTotal: undefined,
+			waterDrink: undefined,
+			notiTime: undefined,
 		};
 		const setting: settingInfo = {
 			status: false,
@@ -91,7 +262,33 @@ export default class randomfoodBot extends BotModel {
 				upsert: true,
 			});
 		const welcomeText = `Chào mừng <b>${user_info.fullName}</b> đến với <b>${botinfo.first_name}</b>\nBấm vào /help để xem chỉ dẫn nha 😉`;
-		await this.sendMessage(welcomeText, this.message.chat.id, this.message.message_thread_id);
+		return await this.sendMessage(
+			welcomeText,
+			this.message.chat.id,
+			this.message.message_thread_id
+		);
+	}
+	async wake(req: any, content: string | null) {
+		function getCurrentTime(): string {
+			const now = new Date();
+			const hours = now.getHours().toString().padStart(2, "0");
+			const minutes = now.getMinutes().toString().padStart(2, "0");
+			return `${hours}:${minutes}`;
+		}
+		await this.database
+			.db("water_reminder")
+			.collection("user_info")
+			.updateOne({
+				filter: { _id: this.message.from.id },
+				update: { $set: { waketime: getCurrentTime() } },
+				upsert: true,
+			});
+		this.updateGlobalValues(this.message.from.id);
+		return await this.sendMessage(
+			"Cậu dậy rồi ư?, bắt đầu uống nước ngày hôm nay nhé! 😎",
+			this.message.chat.id,
+			this.message.message_thread_id
+		);
 	}
 	async about(req: any, content: string | null) {
 		const text = "Bot này tạo ra bởi <b>nthl</b> aka <b>rurimeiko</b> ヽ(✿ﾟ▽ﾟ)ノ";
@@ -106,8 +303,13 @@ export default class randomfoodBot extends BotModel {
 		);
 	}
 	async setting(req: any, content: string | null, callback?: boolean, status?: boolean) {
+		await this.database
+			.db("water_reminder")
+			.collection("command")
+			.deleteOne({
+				filter: { _id: this.message.from.id },
+			});
 		// const text = "help mi";
-
 		let chatId: number;
 		let thread_id: number;
 		if (callback) {
@@ -129,45 +331,116 @@ export default class randomfoodBot extends BotModel {
 			.db("water_reminder")
 			.collection("setting")
 			.findOne({ filter: { _id: this.message.from.id } });
-		const inline_keyboard: InlineKeyboard = [
-			[
-				{
-					text: `Trạng thái thông báo ${setting_user.document.status ? "⭕" : "❌"}`,
-					callback_data: `status_${!setting_user.document.status}`,
-				},
-			],
-			[
-				{ text: "Cân nặng 👞", callback_data: "weight" },
-				{ text: "Chiều cao 🥼", callback_data: "height" },
-			],
-			[
-				{ text: "Giờ ngủ 💤", callback_data: "sleeptime" },
-				{ text: "Giờ thức 🌅", callback_data: "waketime" },
-			],
-			[{ text: "Lượng nước 💧", callback_data: "water" }],
-			[
-				{
-					text: "Khoảng thời gian nhắc lại ⏳",
-					callback_data: "time",
-				},
-			],
-		];
-		const data_user = await this.database
-			.db("water_reminder")
-			.collection("user_info")
-			.findOne({ filter: { _id: this.message.from.id } });
-		if (!callback)
-			return await this.sendMessage(
-				`ID: <code>${data_user.document._id}</code>\nTên: <code>${data_user.document.fullName}</code>\nUsername: <code>${data_user.document.username}</code>\nCân nặng: <code>${data_user.document.weight?data_user.document.weight:"Chưa đặt"}</code>\nChiều cao: <code>${data_user.document.height?data_user.document.height:"Chưa đặt"}</code>\nThời gian ngủ: <code>${data_user.document.sleeptime?data_user.document.sleeptime:"Chưa đặt"}</code>\nThời gian thức: <code>${data_user.document.waketime?data_user.document.waketime:"Chưa đặt"}</code>\nLượng nước tổng: <code>${data_user.document.waterTotal?data_user.document.waterTotal:"Chưa đặt"}</code>\nLượng nước uống: <code>${data_user.document.waterDrink?data_user.document.waterDrink:"Chưa đặt"}</code>`,
+		if (setting_user.document) {
+			const data_user = await this.database
+				.db("water_reminder")
+				.collection("user_info")
+				.findOne({ filter: { _id: this.message.from.id } });
+			if (
+				callback &&
+				status &&
+				data_user.document.height &&
+				data_user.document.sleeptime &&
+				data_user.document.waketime &&
+				data_user.document.waterDrink &&
+				data_user.document.waterTotal &&
+				data_user.document.weight &&
+				data_user.document.notiTime
+			) {
+				await this.updateGlobalValues(this.message.from.id);
+			} else
+				return await this.sendMessage(
+					`Cần điền đủ thông tin để bắt đầu, vui lòng cung cấp các thông tin tối thiểu trong /setting!`,
+					chatId,
+					thread_id
+				);
+
+			const inline_keyboard: InlineKeyboard = [
+				[
+					{
+						text: `Trạng thái thông báo ${setting_user.document.status ? "⭕" : "❌"}`,
+						callback_data: `status_${!setting_user.document.status}`,
+					},
+				],
+				[
+					{ text: "Cân nặng 👞", callback_data: "weight" },
+					{ text: "Chiều cao 🥼", callback_data: "height" },
+				],
+				[
+					{ text: "Giờ ngủ 💤", callback_data: "sleeptime" },
+					{ text: "Giờ thức 🌅", callback_data: "waketime" },
+				],
+				[{ text: "Lượng nước 💧", callback_data: "water" }],
+				[
+					{
+						text: "Khoảng thời gian nhắc lại ⏳",
+						callback_data: "time",
+					},
+				],
+			];
+
+			if (!callback)
+				return await this.sendMessage(
+					`ID: <code>${data_user.document._id}</code>\nTên: <code>${
+						data_user.document.fullName
+					}</code>\nUsername: <code>${
+						data_user.document.username
+					}</code>\nCân nặng: <code>${
+						data_user.document.weight ? data_user.document.weight + " kg" : "Chưa đặt"
+					}</code>\nChiều cao: <code>${
+						data_user.document.height ? data_user.document.height + " cm" : "Chưa đặt"
+					}</code>\nThời gian ngủ: <code>${
+						data_user.document.sleeptime ? data_user.document.sleeptime : "Chưa đặt"
+					}</code>\nThời gian thức: <code>${
+						data_user.document.waketime ? data_user.document.waketime : "Chưa đặt"
+					}</code>\nLượng nước tổng: <code>${
+						data_user.document.waterTotal
+							? data_user.document.waterTotal + " ml"
+							: "Chưa đặt"
+					}</code>\nLượng nước uống: <code>${
+						data_user.document.waterDrink
+							? data_user.document.waterDrink + " ml"
+							: "Chưa đặt"
+					}</code>\nThời gian nhắc lại: <code>${
+						data_user.document.notiTime
+							? data_user.document.notiTime + " phút"
+							: "Chưa đặt"
+					}</code>`,
+					chatId,
+					thread_id,
+					inline_keyboard
+				);
+			return await this.editMessage(
+				`ID: <code>${data_user.document._id}</code>\nTên: <code>${
+					data_user.document.fullName
+				}</code>\nUsername: <code>${data_user.document.username}</code>\nCân nặng: <code>${
+					data_user.document.weight ? data_user.document.weight + " kg" : "Chưa đặt"
+				}</code>\nChiều cao: <code>${
+					data_user.document.height ? data_user.document.height + " cm" : "Chưa đặt"
+				}</code>\nThời gian ngủ: <code>${
+					data_user.document.sleeptime ? data_user.document.sleeptime : "Chưa đặt"
+				}</code>\nThời gian thức: <code>${
+					data_user.document.waketime ? data_user.document.waketime : "Chưa đặt"
+				}</code>\nLượng nước tổng: <code>${
+					data_user.document.waterTotal
+						? data_user.document.waterTotal + " ml"
+						: "Chưa đặt"
+				}</code>\nLượng nước uống: <code>${
+					data_user.document.waterDrink
+						? data_user.document.waterDrink + " ml"
+						: "Chưa đặt"
+				}</code>\nThời gian nhắc lại: <code>${
+					data_user.document.notiTime ? data_user.document.notiTime + " phút" : "Chưa đặt"
+				}</code>`,
 				chatId,
-				thread_id,
+				this.message.message.message_id,
 				inline_keyboard
 			);
-		return await this.editMessage(
-			`ID: <code>${data_user.document._id}</code>\nTên: <code>${data_user.document.fullName}</code>\nUsername: <code>${data_user.document.username}</code>\nCân nặng: <code>${data_user.document.weight?data_user.document.weight:"Chưa đặt"}</code>\nChiều cao: <code>${data_user.document.height?data_user.document.height:"Chưa đặt"}</code>\nThời gian ngủ: <code>${data_user.document.sleeptime?data_user.document.sleeptime:"Chưa đặt"}</code>\nThời gian thức: <code>${data_user.document.waketime?data_user.document.waketime:"Chưa đặt"}</code>\nLượng nước tổng: <code>${data_user.document.waterTotal?data_user.document.waterTotal:"Chưa đặt"}</code>\nLượng nước uống: <code>${data_user.document.waterDrink?data_user.document.waterDrink:"Chưa đặt"}</code>`,
+		}
+		return await this.sendMessage(
+			`Không tìm thấy dữ liệu tài khoảng\nNhấn gửi /start để đăng ký mới!`,
 			chatId,
-			this.message.message.message_id,
-			inline_keyboard
+			thread_id
 		);
 	}
 	private async waterCallback(id: number, on?: boolean) {
@@ -177,6 +450,7 @@ export default class randomfoodBot extends BotModel {
 			.updateOne({
 				filter: { _id: this.message.from.id },
 				update: { $set: { autoWater: on } },
+				upsert: true,
 			});
 		const setting_user = await this.database
 			.db("water_reminder")
@@ -210,6 +484,7 @@ export default class randomfoodBot extends BotModel {
 			.updateOne({
 				filter: { _id: this.message.from.id },
 				update: { $set: { autoTime: on } },
+				upsert: true,
 			});
 		const setting_user = await this.database
 			.db("water_reminder")
@@ -233,7 +508,6 @@ export default class randomfoodBot extends BotModel {
 			inline_keyboard
 		);
 	}
-
 	async handleCallback(request: any) {
 		this.message = request.content.callback_query;
 		const inline_keyboard: InlineKeyboard = [[{ text: "Huỷ 🕳", callback_data: "setting" }]];
@@ -260,35 +534,87 @@ export default class randomfoodBot extends BotModel {
 				return await this.answerCallbackQuery(this.message.id);
 			case "sleeptime":
 				await this.editMessage(
-					`Gửi tớ thời gian ngủ của cậu nhé 😪\nHãy gửi tin nhắn như ví dụ này để đặt thời gian ngủ là <b>10h PM</b>:\n<code>22:00</code>\nĐịnh dạng giờ là 24h nha cậu ⏲`,
+					`Gửi tớ thời gian ngủ của cậu nhé 😪\nHãy gửi tin nhắn như ví dụ này để đặt thời gian ngủ là <b>10h PM</b>:\n\n<code>22:00</code>\n\nĐịnh dạng giờ là 24h nha cậu ⏲`,
 					this.message.message.chat.id,
 					this.message.message.message_id,
 					inline_keyboard
 				);
+				await this.database
+					.db("water_reminder")
+					.collection("command")
+					.updateOne({
+						filter: { _id: this.message.from.id },
+						update: {
+							$set: {
+								messageId: this.message.message.message_id,
+								command: "sleeptime",
+							},
+						},
+						upsert: true,
+					});
 				return await this.answerCallbackQuery(this.message.id);
 			case "waketime":
 				await this.editMessage(
-					`Gửi tớ thời gian thức của cậu nhé 🤭\nHãy gửi tin nhắn như ví dụ này để đặt thời gian thức là <b>07h AM</b>:\n<code>07:00</code>\nĐịnh dạng giờ là 24h nha cậu ⏲`,
+					`Gửi tớ thời gian thức của cậu nhé 🤭\nHãy gửi tin nhắn như ví dụ này để đặt thời gian thức là <b>07h AM</b>:\n\n<code>07:00</code>\n\nĐịnh dạng giờ là 24h nha cậu ⏲`,
 					this.message.message.chat.id,
 					this.message.message.message_id,
 					inline_keyboard
 				);
+				await this.database
+					.db("water_reminder")
+					.collection("command")
+					.updateOne({
+						filter: { _id: this.message.from.id },
+						update: {
+							$set: {
+								messageId: this.message.message.message_id,
+								command: "waketime",
+							},
+						},
+						upsert: true,
+					});
 				return await this.answerCallbackQuery(this.message.id);
 			case "weight":
 				await this.editMessage(
-					`Gửi tớ cân nặng của cậu nhé 🤭\nHãy gửi tin nhắn như ví dụ này để đặt cân nặng là <b>60kg</b>:\n<code>60.0</code> hoặc <code>60</code>\nĐịnh dạng số thực hoặc số nguyên, đơn vị là <b>kg</b> 😶‍🌫️`,
+					`Gửi tớ cân nặng của cậu nhé 🤭\nHãy gửi tin nhắn như ví dụ này để đặt cân nặng là <b>60kg</b>:\n\n<code>60</code>\n\nĐịnh số nguyên, đơn vị là <b>kg</b> 😶‍🌫️`,
 					this.message.message.chat.id,
 					this.message.message.message_id,
 					inline_keyboard
 				);
+				await this.database
+					.db("water_reminder")
+					.collection("command")
+					.updateOne({
+						filter: { _id: this.message.from.id },
+						update: {
+							$set: {
+								messageId: this.message.message.message_id,
+								command: "weight",
+							},
+						},
+						upsert: true,
+					});
 				return await this.answerCallbackQuery(this.message.id);
 			case "height":
 				await this.editMessage(
-					`Gửi tớ chiều cao của cậu nhé 🤭\nHãy gửi tin nhắn như ví dụ này để đặt chiều cao là <b>1m60</b>:\n<code>160.0</code> hoặc <code>160</code>\nĐịnh dạng số thực hoặc số nguyên, đơn vị là <b>cm</b> 😶‍🌫️`,
+					`Gửi tớ chiều cao của cậu nhé 🤭\nHãy gửi tin nhắn như ví dụ này để đặt chiều cao là <b>1m60</b>:\n\n<code>160</code>\n\nĐịnh số nguyên, đơn vị là <b>cm</b> 😶‍🌫️`,
 					this.message.message.chat.id,
 					this.message.message.message_id,
 					inline_keyboard
 				);
+				await this.database
+					.db("water_reminder")
+					.collection("command")
+					.updateOne({
+						filter: { _id: this.message.from.id },
+						update: {
+							$set: {
+								messageId: this.message.message.message_id,
+								command: "height",
+							},
+						},
+						upsert: true,
+					});
 				return await this.answerCallbackQuery(this.message.id);
 			case "setting":
 				await this.setting(request, null, true);
@@ -323,27 +649,66 @@ export default class randomfoodBot extends BotModel {
 				);
 			case "water_set":
 				await this.editMessage(
-					`Gửi tớ lượng nước tổng của cậu nhé 🤭\nHãy gửi tin nhắn như ví dụ này để đặt lượng nước uống là <b>2 lít rưỡi</b>:\n<code>2500</code>\nĐịnh dạng số nguyên, đơn vị là <b>ml</b> 💦💧`,
+					`Gửi tớ lượng nước tổng của cậu nhé 🤭\nHãy gửi tin nhắn như ví dụ này để đặt lượng nước uống là <b>2 lít rưỡi</b>:\n\n<code>2500</code>\n\nĐịnh dạng số nguyên, đơn vị là <b>ml</b> 💦💧`,
 					this.message.message.chat.id,
 					this.message.message.message_id,
 					inline_keyboard
 				);
+				await this.database
+					.db("water_reminder")
+					.collection("command")
+					.updateOne({
+						filter: { _id: this.message.from.id },
+						update: {
+							$set: {
+								messageId: this.message.message.message_id,
+								command: "water_set",
+							},
+						},
+						upsert: true,
+					});
 				return await this.answerCallbackQuery(this.message.id);
 			case "water_amo_set":
 				await this.editMessage(
-					`Gửi tớ lượng nước mỗi lần uống của cậu nhé 🤭\nHãy gửi tin nhắn như ví dụ này để đặt lượng nước uống là <b>500ml</b>:\n<code>500</code>\nĐịnh dạng số nguyên, đơn vị là <b>ml</b> 💦💧`,
+					`Gửi tớ lượng nước mỗi lần uống của cậu nhé 🤭\nHãy gửi tin nhắn như ví dụ này để đặt lượng nước uống là <b>500ml</b>:\n\n<code>500</code>\n\nĐịnh dạng số nguyên, đơn vị là <b>ml</b> 💦💧`,
 					this.message.message.chat.id,
 					this.message.message.message_id,
 					inline_keyboard
 				);
+				await this.database
+					.db("water_reminder")
+					.collection("command")
+					.updateOne({
+						filter: { _id: this.message.from.id },
+						update: {
+							$set: {
+								messageId: this.message.message.message_id,
+								command: "water_amo_set",
+							},
+						},
+						upsert: true,
+					});
 				return await this.answerCallbackQuery(this.message.id);
 			case "time_set":
 				await this.editMessage(
-					`Gửi tớ khoảng thời gian nhắc lại cậu cần đặt nhé 🤭\nHãy gửi tin nhắn như ví dụ này để đặt 30 phút nhắc một lần:\n<code>30</code>\nĐịnh dạng là <b>phút</b> nhé ⏲`,
+					`Gửi tớ khoảng thời gian nhắc lại cậu cần đặt nhé 🤭\nHãy gửi tin nhắn như ví dụ này để đặt 30 phút nhắc một lần:\n\n<code>30</code>\n\nĐịnh dạng là <b>phút</b> nhé ⏲`,
 					this.message.message.chat.id,
 					this.message.message.message_id,
 					inline_keyboard
 				);
+				await this.database
+					.db("water_reminder")
+					.collection("command")
+					.updateOne({
+						filter: { _id: this.message.from.id },
+						update: {
+							$set: {
+								messageId: this.message.message.message_id,
+								command: "time_set",
+							},
+						},
+						upsert: true,
+					});
 				return await this.answerCallbackQuery(this.message.id);
 		}
 	}
