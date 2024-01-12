@@ -48,8 +48,6 @@ export default class randomfoodBot extends BotModel {
 			waketime: string | null;
 			weight: string | null;
 			height: string | null;
-			waterTotal: string | null;
-			waterDrink: string | null;
 		}
 		interface settingInfo {
 			autoTime: boolean;
@@ -65,8 +63,6 @@ export default class randomfoodBot extends BotModel {
 			waketime: null,
 			weight: null,
 			height: null,
-			waterTotal: null,
-			waterDrink: null,
 		};
 		const setting: settingInfo = {
 			status: false,
@@ -158,19 +154,19 @@ export default class randomfoodBot extends BotModel {
 			.findOne({ filter: { _id: this.message.from.id } });
 		if (!callback)
 			return await this.sendMessage(
-				`ID: <code>${data_user.document._id}</code>\nTên: <code>${data_user.document.fullName}</code>\nUsername: <code>${data_user.document.username}</code>\nCân nặng: <code>${data_user.document.weight?data_user.document.weight:"Chưa đặt"}</code>\nChiều cao: <code>${data_user.document.height?data_user.document.height:"Chưa đặt"}</code>\nThời gian ngủ: <code>${data_user.document.sleeptime?data_user.document.sleeptime:"Chưa đặt"}</code>\nThời gian thức: <code>${data_user.document.waketime?data_user.document.waketime:"Chưa đặt"}</code>\nLượng nước tổng: <code>${data_user.document.waterTotal?data_user.document.waterTotal:"Chưa đặt"}</code>\nLượng nước uống: <code>${data_user.document.waterDrink?data_user.document.waterDrink:"Chưa đặt"}</code>`,
+				`ID: <code>${data_user.document._id}</code>\nTên: <code>${data_user.document.fullName}</code>\nUsername: <code>${data_user.document.username}</code>\nCân nặng: <code>${data_user.document.weight}</code>\nChiều cao: <code>${data_user.document.height}</code>\nThời gian ngủ: <code>${data_user.document.sleeptime}</code>\nThời gian thức: <code>${data_user.document.waketime}</code>\n`,
 				chatId,
 				thread_id,
 				inline_keyboard
 			);
 		return await this.editMessage(
-			`ID: <code>${data_user.document._id}</code>\nTên: <code>${data_user.document.fullName}</code>\nUsername: <code>${data_user.document.username}</code>\nCân nặng: <code>${data_user.document.weight?data_user.document.weight:"Chưa đặt"}</code>\nChiều cao: <code>${data_user.document.height?data_user.document.height:"Chưa đặt"}</code>\nThời gian ngủ: <code>${data_user.document.sleeptime?data_user.document.sleeptime:"Chưa đặt"}</code>\nThời gian thức: <code>${data_user.document.waketime?data_user.document.waketime:"Chưa đặt"}</code>\nLượng nước tổng: <code>${data_user.document.waterTotal?data_user.document.waterTotal:"Chưa đặt"}</code>\nLượng nước uống: <code>${data_user.document.waterDrink?data_user.document.waterDrink:"Chưa đặt"}</code>`,
+			`ID: <code>${data_user.document._id}</code>\nTên: <code>${data_user.document.fullName}</code>\nUsername: <code>${data_user.document.username}</code>\nCân nặng: <code>${data_user.document.weight}</code>\nChiều cao: <code>${data_user.document.height}</code>\nThời gian ngủ: <code>${data_user.document.sleeptime}</code>\nThời gian thức: <code>${data_user.document.waketime}</code>\n`,
 			chatId,
 			this.message.message.message_id,
 			inline_keyboard
 		);
 	}
-	private async waterCallback(id: number, on?: boolean) {
+	private async waterCallback(id: number, on: boolean = true) {
 		await this.database
 			.db("water_reminder")
 			.collection("setting")
@@ -190,10 +186,7 @@ export default class randomfoodBot extends BotModel {
 					callback_data: `auto_water_${!setting_user.document.autoWater}`,
 				},
 			],
-			[
-				{ text: "Đặt lượng nước 🌊", callback_data: "water_set" },
-				{ text: "Đặt lượng uống 🥤", callback_data: "water_amo_set" },
-			],
+			[{ text: "Đặt lượng nước cần uống một ngày 🌊", callback_data: "water_set" }],
 			[{ text: "Quay lại 👈", callback_data: "setting" }],
 		];
 		await this.editMessage(
@@ -203,7 +196,7 @@ export default class randomfoodBot extends BotModel {
 			inline_keyboard
 		);
 	}
-	private async timeCallback(id: number, on?: boolean) {
+	private async timeCallback(id: number, on: boolean = true) {
 		await this.database
 			.db("water_reminder")
 			.collection("setting")
@@ -222,7 +215,7 @@ export default class randomfoodBot extends BotModel {
 					callback_data: `auto_time_${!setting_user.document.autoTime}`,
 				},
 			],
-			[{ text: "Đặt thời gian nhắc lại ⏳", callback_data: "time_set" }],
+			[{ text: "Đặt thời gian nhắc lại", callback_data: "time_set" }],
 			[{ text: "Quay lại 👈", callback_data: "setting" }],
 		];
 
@@ -236,7 +229,7 @@ export default class randomfoodBot extends BotModel {
 
 	async handleCallback(request: any) {
 		this.message = request.content.callback_query;
-		const inline_keyboard: InlineKeyboard = [[{ text: "Huỷ 🕳", callback_data: "setting" }]];
+		const inline_keyboard: InlineKeyboard = [[{ text: "Huỷ 🕳", callback_data: "cancel" }]];
 		switch (this.message.data) {
 			case "status_true":
 				await this.setting(request, null, true, true);
@@ -260,7 +253,7 @@ export default class randomfoodBot extends BotModel {
 				return await this.answerCallbackQuery(this.message.id);
 			case "sleeptime":
 				await this.editMessage(
-					`Gửi tớ thời gian ngủ của cậu nhé 😪\nHãy gửi tin nhắn như ví dụ này để đặt thời gian ngủ là <b>10h PM</b>:\n<code>22:00</code>\nĐịnh dạng giờ là 24h nha cậu ⏲`,
+					`Gửi tớ thời gian ngủ của cậu nhé 😪\nHãy dùng như ví dụ này: <code>07:00</code>\nĐịnh dạng giờ là 24h nha cậu 😶‍🌫️`,
 					this.message.message.chat.id,
 					this.message.message.message_id,
 					inline_keyboard
@@ -268,7 +261,7 @@ export default class randomfoodBot extends BotModel {
 				return await this.answerCallbackQuery(this.message.id);
 			case "waketime":
 				await this.editMessage(
-					`Gửi tớ thời gian thức của cậu nhé 🤭\nHãy gửi tin nhắn như ví dụ này để đặt thời gian thức là <b>07h AM</b>:\n<code>07:00</code>\nĐịnh dạng giờ là 24h nha cậu ⏲`,
+					`Gửi tớ thời gian thức của cậu nhé 🤭\nHãy dùng như ví dụ này: <code>22:00</code>\nĐịnh dạng giờ là 24h nha cậu 😶‍🌫️`,
 					this.message.message.chat.id,
 					this.message.message.message_id,
 					inline_keyboard
@@ -276,7 +269,7 @@ export default class randomfoodBot extends BotModel {
 				return await this.answerCallbackQuery(this.message.id);
 			case "weight":
 				await this.editMessage(
-					`Gửi tớ cân nặng của cậu nhé 🤭\nHãy gửi tin nhắn như ví dụ này để đặt cân nặng là <b>60kg</b>:\n<code>60.0</code> hoặc <code>60</code>\nĐịnh dạng số thực hoặc số nguyên, đơn vị là <b>kg</b> 😶‍🌫️`,
+					`Gửi tớ cân nặng của cậu nhé 🤭\nHãy dùng như ví dụ này: <code>63.4</code> hoặc <code>60</code>\nĐịnh dạng số thực hoặc số nguyên, đơn vị là <b>kg</b> 😶‍🌫️`,
 					this.message.message.chat.id,
 					this.message.message.message_id,
 					inline_keyboard
@@ -284,7 +277,7 @@ export default class randomfoodBot extends BotModel {
 				return await this.answerCallbackQuery(this.message.id);
 			case "height":
 				await this.editMessage(
-					`Gửi tớ chiều cao của cậu nhé 🤭\nHãy gửi tin nhắn như ví dụ này để đặt chiều cao là <b>1m60</b>:\n<code>160.0</code> hoặc <code>160</code>\nĐịnh dạng số thực hoặc số nguyên, đơn vị là <b>cm</b> 😶‍🌫️`,
+					`Gửi tớ chiều cao của cậu nhé 🤭\nHãy dùng như ví dụ này: <code>163.4</code> hoặc <code>160</code>\nĐịnh dạng số thực hoặc số nguyên, đơn vị là <b>cm</b> 😶‍🌫️`,
 					this.message.message.chat.id,
 					this.message.message.message_id,
 					inline_keyboard
@@ -294,14 +287,14 @@ export default class randomfoodBot extends BotModel {
 				await this.setting(request, null, true);
 				return await this.answerCallbackQuery(this.message.id);
 			case "auto_time_true":
-				await this.timeCallback(this.message.from.id, true);
+				await this.timeCallback(this.message.from.id);
 				return await this.answerCallbackQuery(
 					this.message.id,
 					"Thời gian nhắc lại đã đặt thành tự động",
 					true
 				);
 			case "auto_water_true":
-				await this.waterCallback(this.message.from.id, true);
+				await this.waterCallback(this.message.from.id);
 				return await this.answerCallbackQuery(
 					this.message.id,
 					"Lượng nước đã đặt thành tự động",
@@ -322,28 +315,13 @@ export default class randomfoodBot extends BotModel {
 					true
 				);
 			case "water_set":
-				await this.editMessage(
-					`Gửi tớ lượng nước tổng của cậu nhé 🤭\nHãy gửi tin nhắn như ví dụ này để đặt lượng nước uống là <b>2 lít rưỡi</b>:\n<code>2500</code>\nĐịnh dạng số nguyên, đơn vị là <b>ml</b> 💦💧`,
-					this.message.message.chat.id,
-					this.message.message.message_id,
-					inline_keyboard
-				);
-				return await this.answerCallbackQuery(this.message.id);
-			case "water_amo_set":
-				await this.editMessage(
-					`Gửi tớ lượng nước mỗi lần uống của cậu nhé 🤭\nHãy gửi tin nhắn như ví dụ này để đặt lượng nước uống là <b>500ml</b>:\n<code>500</code>\nĐịnh dạng số nguyên, đơn vị là <b>ml</b> 💦💧`,
-					this.message.message.chat.id,
-					this.message.message.message_id,
-					inline_keyboard
-				);
+				console.log("x");
 				return await this.answerCallbackQuery(this.message.id);
 			case "time_set":
-				await this.editMessage(
-					`Gửi tớ khoảng thời gian nhắc lại cậu cần đặt nhé 🤭\nHãy gửi tin nhắn như ví dụ này để đặt 30 phút nhắc một lần:\n<code>30</code>\nĐịnh dạng là <b>phút</b> nhé ⏲`,
-					this.message.message.chat.id,
-					this.message.message.message_id,
-					inline_keyboard
-				);
+				console.log("x");
+				return await this.answerCallbackQuery(this.message.id);
+			case "cancel":
+				console.log("x");
 				return await this.answerCallbackQuery(this.message.id);
 		}
 	}

@@ -17,12 +17,10 @@ export default class Handler {
 		this.request = await this.processRequest(request);
 		this.bot = new randomfoodBot({
 			userBot: this.configs.userBot,
-			bingImageCT: this.configs.bingImageCT,
 			database: this.configs.database,
 			token: this.token, // Bot Token
 			commands: this.configs.commands, // Bot commands
 		});
-
 		if (
 			this.request.method === "POST" &&
 			this.request.type.includes("application/json") &&

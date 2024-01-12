@@ -30,7 +30,6 @@ const worker: ExportedHandler<Bindings> = {
 				"/start": botCommands.start,
 				"/help": botCommands.help,
 				"/setting": botCommands.setting,
-				"/about": botCommands.about,
 			},
 		};
 		const bot = new Handler(botConfig);

@@ -2,6 +2,7 @@ import * as utils from "../utils";
 import { supportedLanguages, type InlineKeyboard, type supportedLanguagesType } from "./data";
 import type MongoDB from "../mongodb/init";
 export default class BotModel {
+	[x: string]: any;
 	private token: any;
 	private commands: any;
 	private url: string;
@@ -15,69 +16,64 @@ export default class BotModel {
 		this.database = config.database;
 		this.userBot = config.userBot;
 	}
+
 	async update(request: any) {
 		try {
 			this.message = request.content.message;
 			// console.log(this.message);
 			if (this.message.hasOwnProperty("text")) {
-				// process text
-
 				// Test command and execute
 				if (!(await this.executeCommand(request))) {
-					// Test is not a command
-					// await this.sendMessage("This is not a command", this.message.chat.id);
+					await this.processText(request);
 				}
 			} else if (this.message.hasOwnProperty("photo")) {
 				// process photo
-				console.log(this.message.photo);
+				await this.processPhoto(request);
 			} else if (this.message.hasOwnProperty("video")) {
 				// process video
-				console.log(this.message.video);
+				await this.processVideo(request);
 			} else if (this.message.hasOwnProperty("animation")) {
 				// process animation
-				console.log(this.message.animation);
+				await this.processAnimation(request);
+
 			} else if (this.message.hasOwnProperty("locaiton")) {
 				// process locaiton
-				console.log(this.message.locaiton);
+				await this.processLocaiton(request);
 			} else if (this.message.hasOwnProperty("poll")) {
 				// process poll
-				console.log(this.message.poll);
+				await this.processPoll(request);
 			} else if (this.message.hasOwnProperty("contact")) {
 				// process contact
-				console.log(this.message.contact);
+				await this.processContact(request);
 			} else if (this.message.hasOwnProperty("dice")) {
 				// process dice
-				console.log(this.message.dice);
+				await this.processDice(request);
 			} else if (this.message.hasOwnProperty("sticker")) {
 				// process sticker
-				console.log(this.message.sticker);
+				await this.processSticker(request);
 			} else if (this.message.hasOwnProperty("reply_to_message")) {
 				// process reply of a message
-				console.log(this.message.reply_to_message);
+				await this.processReply(request);
 			} else {
 				// process unknown type
-				console.log(this.message);
+				await this.unDefine(request);
 			}
 		} catch (error: JSON | any) {
 			console.error(error);
-			return utils.toError(error.message);
+			return utils.toJSON("OK");
 		}
 		// return 200 OK response to every update request
 		return utils.toJSON("OK");
 	}
 	async updateCallback(request: any) {
 		try {
-			this.message = request.content.callback_query;
-
-			await this.sendMessage(
-				this.makeHtmlCode(JSON.stringify(this.message, null, 2), "JSON"),
-				this.message.message.chat.id
-			);
+			await this.handleCallback(request);
 		} catch (error: JSON | any) {
 			console.error(error);
+			await this.answerCallbackQuery(this.message.id, "Có lỗi xảy ra", true);
 			return utils.toError(error.message);
 		}
-		// return 200 OK response to every update request
+		await this.answerCallbackQuery(this.message.id, "Thành công!", true);
 		return utils.toJSON("OK");
 	}
 	escapeHtml(str: string): string {
@@ -98,7 +94,6 @@ export default class BotModel {
 		// Tạo mã HTML với thẻ <code> và cấu trúc cho ngôn ngữ cụ thể
 		return `<pre><code class="language-${language}">${this.escapeHtml(str)}</code></pre>`;
 	}
-
 	async executeCommand(req: any) {
 		let cmdArray = this.message.text.split(" ");
 		let command: string = cmdArray.shift();
@@ -114,7 +109,24 @@ export default class BotModel {
 		}
 		return false;
 	}
-
+	async getMe() {
+		const base_url = `${this.url}/getMe`;
+		try {
+			const response: any = await fetch(base_url, {
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			}).then((resp) => resp.json());
+			if (!response.ok) {
+				return null;
+			}
+			return response.result;
+		} catch (error: any) {
+			console.error("Error sending message:", error.message);
+			return null;
+		}
+	}
 	async sendMessage(
 		text: string,
 		chatId: number,
