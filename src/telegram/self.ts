@@ -1,5 +1,4 @@
 import BotModel from "./core";
-import anni from "../anniversary";
 
 export default class randomfoodBot extends BotModel {
 	constructor(config: any) {
