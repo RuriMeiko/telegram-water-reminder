@@ -138,8 +138,6 @@ export default class randomfoodBot extends BotModel {
 							update: { $set: { waterTotal: { $numberInt: waterTotal } } },
 							upsert: true,
 						});
-					await this.updateGlobalValues(this.message.from.id);
-
 					await this.editMessage(
 						"Đặt tổng lượng nước trong một ngày thành công~ 🙄",
 						this.message.chat.id,
@@ -191,7 +189,6 @@ export default class randomfoodBot extends BotModel {
 							update: { $set: { notiTime: { $numberInt: notiTime } } },
 							upsert: true,
 						});
-					await this.updateGlobalValues(this.message.from.id);
 					await this.editMessage(
 						"Đặt thời gian nhắc uống nước thành công~ 😴",
 						this.message.chat.id,
@@ -244,8 +241,8 @@ export default class randomfoodBot extends BotModel {
 		};
 		const setting: settingInfo = {
 			status: false,
-			autoTime: true,
-			autoWater: true,
+			autoTime: false,
+			autoWater: false,
 		};
 		const botinfo = await this.getMe();
 		await this.database
@@ -271,30 +268,20 @@ export default class randomfoodBot extends BotModel {
 			this.message.message_thread_id
 		);
 	}
-	getCurrentTime(): string {
-		const now = new Date();
-		now.setHours(now.getHours() + 7);
-		const hours = now.getHours().toString().padStart(2, "0");
-		const minutes = now.getMinutes().toString().padStart(2, "0");
-		return `${hours}:${minutes}`;
-	}
 	async wake(req: any, content: string | null) {
-		await this.database
-			.db("water_reminder")
-			.collection("setting")
-			.updateOne({
-				filter: { _id: this.message.from.id },
-				update: { $set: { status: true, wake: true } },
-				upsert: true,
-			});
-
+		function getCurrentTime(): string {
+			const now = new Date();
+			const hours = now.getHours().toString().padStart(2, "0");
+			const minutes = now.getMinutes().toString().padStart(2, "0");
+			return `${hours}:${minutes}`;
+		}
 		try {
 			await this.database
 				.db("water_reminder")
 				.collection("user_info")
 				.updateOne({
 					filter: { _id: this.message.from.id },
-					update: { $set: { waketime: this.getCurrentTime() } },
+					update: { $set: { waketime: getCurrentTime() } },
 					upsert: true,
 				});
 			await this.updateGlobalValues(this.message.from.id);
@@ -317,20 +304,10 @@ export default class randomfoodBot extends BotModel {
 	}
 	async help(req: any, content: string | null) {
 		// const text = "help mi";
-		const text = `<b>Các lệnh như sau:</b>\n
-		\n/start Tạo tài khoảng mới 🆕\n
-		\n/wake Thông báo là vừa thức dậy, bot sẽ bắt đầu nhắc cậu uống nước kể từ lúc này (Lưu ý chức năng tự động gửi thông báo theo giờ thức sẽ <b>tắt</b>!)➰\n
-		\n/setting Cài đặt các thông tin cơ bản để có thể sử dụng bot, các thông tin như thời gian ngủ, thời gian thức, chiều cao, cân nặng có thể đặt tạm bợ 🌒\n
-		\n/about about me 🌟`;
+		const text = `Các lệnh như sau:\n\n/start Tạo tài khoảng mới 🆕\n\n/wake Thông báo là vừa thức dậy, bot sẽ bắt đầu nhắc cậu uống nước kể từ lúc này (thời gian cậu bấm /wake sẽ lưu sang ngày hôm sau, tức hôm sau không cần bấm /wake bot vẫn nhớ và nhắc cậu uống nước kể từ lúc đó, có thể bấm /wake để reset lại ➰\n\n/setting Cài đặt các thông tin cơ bản để có thể sử dụng bot 🌒\n\n/about about me 🌟`;
 		return await this.sendMessage(text, this.message.chat.id, this.message.message_thread_id);
 	}
-	async setting(
-		req: any,
-		content: string | null,
-		callback?: boolean,
-		status?: boolean,
-		autowake?: boolean
-	) {
+	async setting(req: any, content: string | null, callback?: boolean, status?: boolean) {
 		let chatId: number;
 		let thread_id: number;
 		if (callback) {
@@ -339,8 +316,7 @@ export default class randomfoodBot extends BotModel {
 				.collection("setting")
 				.updateOne({
 					filter: { _id: this.message.from.id },
-					update: { $set: { status: status, wake: !autowake } },
-					upsert: true,
+					update: { $set: { status: status } },
 				});
 			this.message = req.content.callback_query;
 			chatId = this.message.message.chat.id;
@@ -359,10 +335,6 @@ export default class randomfoodBot extends BotModel {
 			.db("water_reminder")
 			.collection("user_info")
 			.findOne({ filter: { _id: this.message.from.id } });
-		const water_user = await this.database
-			.db("water_reminder")
-			.collection("water_info")
-			.findOne({ filter: { _id: this.message.from.id } });
 		if (callback && status)
 			if (
 				data_user.document.height &&
@@ -373,15 +345,14 @@ export default class randomfoodBot extends BotModel {
 				data_user.document.weight &&
 				data_user.document.notiTime
 			) {
-				await this.updateGlobalValues(this.message.from.id, this.getCurrentTime());
+				await this.updateGlobalValues(this.message.from.id);
 			} else {
 				await this.database
 					.db("water_reminder")
 					.collection("setting")
 					.updateOne({
 						filter: { _id: this.message.from.id },
-						update: { $set: { status: false, wake: true } },
-						upsert: true,
+						update: { $set: { status: false } },
 					});
 				return await this.sendMessage(
 					`Cần điền đủ thông tin để bắt đầu, vui lòng cung cấp các thông tin tối thiểu trong /setting!`,
@@ -396,12 +367,6 @@ export default class randomfoodBot extends BotModel {
 			.findOne({ filter: { _id: this.message.from.id } });
 		if (setting_user.document) {
 			const inline_keyboard: InlineKeyboard = [
-				[
-					{
-						text: `Tự động thông báo ${!setting_user.document.wake ? "⭕" : "❌"}`,
-						callback_data: `wake_${setting_user.document.wake}`,
-					},
-				],
 				[
 					{
 						text: `Trạng thái thông báo ${setting_user.document.status ? "⭕" : "❌"}`,
@@ -444,18 +409,16 @@ export default class randomfoodBot extends BotModel {
 					}</code>\nThời gian thức: <code>${
 						data_user.document.waketime ? data_user.document.waketime : "Chưa đặt 🔴"
 					}</code>\nLượng nước tổng: <code>${
-						water_user.document.waterIntake
-							? water_user.document.waterIntake +
-							  ` ml ${setting_user.document.autoWater ? "(Tự động)" : "(Thủ công)"}`
+						data_user.document.waterTotal
+							? data_user.document.waterTotal + " ml"
 							: "Chưa đặt 🔴"
 					}</code>\nLượng nước uống: <code>${
 						data_user.document.waterDrink
 							? data_user.document.waterDrink + " ml"
 							: "Chưa đặt 🔴"
 					}</code>\nThời gian nhắc lại: <code>${
-						water_user.document.timeDelay
-							? water_user.document.timeDelay +
-							  ` phút ${setting_user.document.autoTime ? "(Tự động)" : "(Thủ công)"}`
+						data_user.document.notiTime
+							? data_user.document.notiTime + " phút"
 							: "Chưa đặt 🔴"
 					}</code>`,
 					chatId,
@@ -474,18 +437,16 @@ export default class randomfoodBot extends BotModel {
 				}</code>\nThời gian thức: <code>${
 					data_user.document.waketime ? data_user.document.waketime : "Chưa đặt 🔴"
 				}</code>\nLượng nước tổng: <code>${
-					water_user.document.waterIntake
-						? water_user.document.waterIntake +
-						  ` ml ${setting_user.document.autoWater ? "(Tự động)" : "(Thủ công)"}`
+					data_user.document.waterTotal
+						? data_user.document.waterTotal + " ml"
 						: "Chưa đặt 🔴"
 				}</code>\nLượng nước uống: <code>${
 					data_user.document.waterDrink
 						? data_user.document.waterDrink + " ml"
 						: "Chưa đặt 🔴"
 				}</code>\nThời gian nhắc lại: <code>${
-					water_user.document.timeDelay
-						? water_user.document.timeDelay +
-						  ` phút ${setting_user.document.autoTime ? "(Tự động)" : "(Thủ công)"}`
+					data_user.document.notiTime
+						? data_user.document.notiTime + " phút"
 						: "Chưa đặt 🔴"
 				}</code>`,
 				chatId,
@@ -500,6 +461,37 @@ export default class randomfoodBot extends BotModel {
 		);
 	}
 	private async waterCallback(id: number, on?: boolean) {
+		const data_user = await this.database
+			.db("water_reminder")
+			.collection("user_info")
+			.findOne({ filter: { _id: this.message.from.id } });
+		if (on) {
+			if (!data_user.document.height || !data_user.document.weight) {
+				await this.sendMessage(
+					`Cần điền đủ thông tin để bắt đầu, vui lòng cung cấp các thông tin tối thiểu trong /setting! <b>(Chiều cao và cân nặng)</b>`,
+					this.message.message.chat.id,
+					this.message.message.message_thread_id
+				);
+				return await this.answerCallbackQuery(
+					this.message.id,
+					"Đặt lượng nước thất bại!",
+					true
+				);
+			}
+		} else if (on === false) {
+			if (!data_user.document.waterTotal) {
+				await this.sendMessage(
+					`Cần điền đủ thông tin để bắt đầu, vui lòng cung cấp các thông tin tối thiểu trong /setting! <b>(Lượng nước)</b>`,
+					this.message.message.chat.id,
+					this.message.message.message_thread_id
+				);
+				return await this.answerCallbackQuery(
+					this.message.id,
+					"Đặt lượng nước thất bại!",
+					true
+				);
+			}
+		}
 		await this.database
 			.db("water_reminder")
 			.collection("setting")
@@ -526,16 +518,57 @@ export default class randomfoodBot extends BotModel {
 			],
 			[{ text: "Quay lại 👈", callback_data: "setting" }],
 		];
-
-		if (on !== undefined) await this.updateGlobalValues(this.message.from.id);
-		return await this.editMessage(
+		await this.editMessage(
 			`Chức năng tự động tính lượng nước dựa trên <b>cân nặng</b> và <b>chiều cao</b>, tắt chức năng tự động để có thể dùng lượng nước tự đặt 💦`,
 			this.message.message.chat.id,
 			this.message.message.message_id,
 			inline_keyboard
 		);
+		if (on) {
+			return await this.answerCallbackQuery(
+				this.message.id,
+				"Lượng nước đã đặt thành tự động",
+				true
+			);
+		} else if (on === false)
+			return await this.answerCallbackQuery(
+				this.message.id,
+				"Lượng nước đã đặt thành thủ công",
+				true
+			);
 	}
 	private async timeCallback(id: number, on?: boolean) {
+		const data_user = await this.database
+			.db("water_reminder")
+			.collection("user_info")
+			.findOne({ filter: { _id: this.message.from.id } });
+		if (on) {
+			if (!data_user.document.sleeptime || !data_user.document.waketime) {
+				await this.sendMessage(
+					`Cần điền đủ thông tin để bắt đầu, vui lòng cung cấp các thông tin tối thiểu trong /setting! <b>(Thời gian ngủ và thời gian thức)</b>`,
+					this.message.message.chat.id,
+					this.message.message.message_thread_id
+				);
+				return await this.answerCallbackQuery(
+					this.message.id,
+					"Đặt thời gian nhắc lại thất bại!",
+					true
+				);
+			}
+		} else if (on === false) {
+			if (!data_user.document.notiTime) {
+				await this.sendMessage(
+					`Cần điền đủ thông tin để bắt đầu, vui lòng cung cấp các thông tin tối thiểu trong /setting! <b>(Thời gian nhắc lại)</b>`,
+					this.message.message.chat.id,
+					this.message.message.message_thread_id
+				);
+				return await this.answerCallbackQuery(
+					this.message.id,
+					"Đặt thời gian nhắc lại thất bại!",
+					true
+				);
+			}
+		}
 		await this.database
 			.db("water_reminder")
 			.collection("setting")
@@ -558,33 +591,30 @@ export default class randomfoodBot extends BotModel {
 			[{ text: "Đặt thời gian nhắc lại ⏳", callback_data: "time_set" }],
 			[{ text: "Quay lại 👈", callback_data: "setting" }],
 		];
-		if (on !== undefined) await this.updateGlobalValues(this.message.from.id);
 
-		return await this.editMessage(
+		await this.editMessage(
 			`Chức năng tự động tính thời gian nhắc dựa trên <b>thời gian thức</b> và <b>thời gian ngủ</b>, tắt chức năng tự động để có thể dùng khoảng thời gian tự đặt ⏲`,
 			this.message.message.chat.id,
 			this.message.message.message_id,
 			inline_keyboard
 		);
+		if (on) {
+			return await this.answerCallbackQuery(
+				this.message.id,
+				"Thời gian nhắc lại đã đặt thành tự động",
+				true
+			);
+		} else if (on === false)
+			return await this.answerCallbackQuery(
+				this.message.id,
+				"Thời gian nhắc lại đã đặt thành thủ công",
+				true
+			);
 	}
 	async handleCallback(request: any) {
 		this.message = request.content.callback_query;
 		const inline_keyboard: InlineKeyboard = [[{ text: "Huỷ 🕳", callback_data: "setting" }]];
 		switch (this.message.data) {
-			case "wake_true":
-				await this.setting(request, null, true, undefined, true);
-				return await this.answerCallbackQuery(
-					this.message.id,
-					"Đã bật thông báo tự động uống nước 💦",
-					true
-				);
-			case "wake_false":
-				await this.setting(request, null, true, undefined, false);
-				return await this.answerCallbackQuery(
-					this.message.id,
-					"Đã tắt thông báo tự động uống nước 💦",
-					true
-				);
 			case "status_true":
 				await this.setting(request, null, true, true);
 				return await this.answerCallbackQuery(
@@ -693,33 +723,17 @@ export default class randomfoodBot extends BotModel {
 				await this.setting(request, null, true);
 				return await this.answerCallbackQuery(this.message.id);
 			case "auto_time_true":
-				await this.timeCallback(this.message.from.id, true);
-				return await this.answerCallbackQuery(
-					this.message.id,
-					"Thời gian nhắc lại đã đặt thành tự động",
-					true
-				);
+				return await this.timeCallback(this.message.from.id, true);
+
 			case "auto_water_true":
-				await this.waterCallback(this.message.from.id, true);
-				return await this.answerCallbackQuery(
-					this.message.id,
-					"Lượng nước đã đặt thành tự động",
-					true
-				);
+				return await this.waterCallback(this.message.from.id, true);
+
 			case "auto_time_false":
-				await this.timeCallback(this.message.from.id, false);
-				return await this.answerCallbackQuery(
-					this.message.id,
-					"Thời gian nhắc lại đã đặt thành thủ công",
-					true
-				);
+				return await this.timeCallback(this.message.from.id, false);
+
 			case "auto_water_false":
-				await this.waterCallback(this.message.from.id, false);
-				return await this.answerCallbackQuery(
-					this.message.id,
-					"Lượng nước đã đặt thành thủ công",
-					true
-				);
+				return await this.waterCallback(this.message.from.id, false);
+
 			case "water_set":
 				await this.editMessage(
 					`Gửi tớ lượng nước tổng của cậu nhé 🤭\nHãy gửi tin nhắn như ví dụ này để đặt lượng nước uống là <b>2 lít rưỡi</b>:\n\n<code>2500</code>\n\nĐịnh dạng số nguyên, đơn vị là <b>ml</b> 💦💧`,
