@@ -54,9 +54,11 @@ export default class HandlerCrons extends botModel {
 		let waterIntake: number;
 
 		if (SETTING_INFO.document.autoWater)
-			waterIntake = await this.tinhLuongNuocTheoBMI(
-				GLOBAL_INFO.document.weight,
-				GLOBAL_INFO.document.height
+			waterIntake = Math.floor(
+				await this.tinhLuongNuocTheoBMI(
+					GLOBAL_INFO.document.weight,
+					GLOBAL_INFO.document.height
+				)
 			);
 		else waterIntake = GLOBAL_INFO.document.waterTotal;
 
@@ -115,7 +117,7 @@ export default class HandlerCrons extends botModel {
 				luongNuoc = canNang * 0.06;
 			}
 			// Trả về kết quả bằng lượng nước tính được (đơn vị ml)
-			resolve(Math.floor(luongNuoc * 1000));
+			resolve(luongNuoc * 1000);
 		});
 	}
 
