@@ -68,13 +68,11 @@ export default class HandlerCrons extends botModel {
 		else timeDelay = GLOBAL_INFO.document.notiTime;
 		let count: number = 0;
 		if (time) {
-			const genTime = (time: string) => {
-				const intervalMs = timeDelay * 60 * 1000;
-				count = 0;
-				while (new Date(WAKE_TIME).getTime() + count * intervalMs < CURTIME.getTime()) {
-					count++;
-				}
-			};
+			const intervalMs = timeDelay * 60 * 1000;
+			count = 0;
+			while (new Date(WAKE_TIME).getTime() + count * intervalMs <= CURTIME.getTime()) {
+				count++;
+			}
 		}
 		// Tính toán khoảng cách giữa các giờ uống nước và lưu vào biến timeDelay
 		await this.database
@@ -92,6 +90,7 @@ export default class HandlerCrons extends botModel {
 						numIntakes: { $numberInt: numIntakes.toString() },
 						timeDelay: { $numberInt: timeDelay.toString() },
 						count: count,
+						done: false,
 					},
 				},
 				upsert: true,
@@ -187,11 +186,23 @@ export default class HandlerCrons extends botModel {
 		else {
 			const water_today = WATER_INFO.document.count * GLOBAL_INFO.document.waterDrink;
 			const water_need = GLOBAL_INFO.document.waterTotal;
-			if (water_need <= water_today) {
+			if (water_need <= water_today && !WATER_INFO.document.done) {
 				await this.sendMessage(
 					"Chúc mừng, cậu đã uống đủ nước cho hôm nay 😎\nHãy cố gắng vào ngày mai nhé!🥳",
 					id
 				);
+				await this.database
+					.db("water_reminder")
+					.collection("water_info")
+					.updateOne({
+						filter: { _id: id },
+						update: {
+							$set: {
+								done: true,
+							},
+						},
+						upsert: true,
+					});
 				if (GLOBAL_SETTING.document.wake)
 					await this.database
 						.db("water_reminder")
