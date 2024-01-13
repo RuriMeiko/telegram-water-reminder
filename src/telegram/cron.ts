@@ -162,17 +162,17 @@ export default class HandlerCrons extends botModel {
 		// Lấy thời gian hiện tại và chuẩn hoá múi giờ sang +7
 		const currentTime = new Date();
 		currentTime.setHours(currentTime.getHours() + this.timezone);
-		await this.sendMessage(
-			`Thời gian hiện tại ${id}: ${currentTime.toLocaleString()}`,
-			1775446945
-		);
+		// await this.sendMessage(
+		// 	`Thời gian hiện tại ${id}: ${currentTime.toLocaleString()}`,
+		// 	1775446945
+		// );
 		// console.log("Thời gian hiện tại: ", currentTime.toLocaleString());
 		// Lấy thời gian uống nước tiếp theo
 		const nextIntakeTime = getNextIntakeTime();
-		await this.sendMessage(
-			`Thời gian uống nước ${id}:  ${new Date(nextIntakeTime).toLocaleString()}`,
-			1775446945
-		);
+		// await this.sendMessage(
+		// 	`Thời gian uống nước ${id}:  ${new Date(nextIntakeTime).toLocaleString()}`,
+		// 	1775446945
+		// );
 		const count_check = WATER_INFO.document.count;
 		// Kiểm tra nếu count mà nhỏ hơn numIntakes tức là chưa uống đủ nước
 		const numIntakes_check = WATER_INFO.document.numIntakes;
