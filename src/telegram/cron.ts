@@ -61,7 +61,7 @@ export default class HandlerCrons extends botModel {
 		else waterIntake = GLOBAL_INFO.document.waterTotal;
 
 		// Tính toán số lần uống nước dựa trên lượng nước và số nước mỗi lần uống, lưu vào biến numIntakes
-		const numIntakes = Math.floor(waterIntake / GLOBAL_INFO.document.waterDrink);
+		const numIntakes = Math.round(waterIntake / GLOBAL_INFO.document.waterDrink);
 		let timeDelay: number;
 
 		if (SETTING_INFO.document.autoTime) timeDelay = Math.round((hoursAwake / numIntakes) * 60);
